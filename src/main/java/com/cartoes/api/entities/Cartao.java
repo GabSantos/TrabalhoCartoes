@@ -17,94 +17,91 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 @Entity
 @Table(name = "cartao")
 public class Cartao implements Serializable {
- private static final long serialVersionUID = 1L;
- 
- @Id
- @GeneratedValue(strategy = GenerationType.AUTO)
- private int id;
+    private static final long serialVersionUID = 1L;
 
- @Column(name = "numero", nullable = false, length = 16, unique = true)
- private String numero;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
 
- @Column(name = "data_Validade", nullable = false)
- private Date dataValidade;
+    @Column(name = "numero", nullable = false, length = 16, unique = true)
+    private String numero;
 
- @Column(name = "bloqueado", nullable = false)
- private boolean bloqueado;
+    @Column(name = "data_Validade", nullable = false)
+    private Date dataValidade;
 
- @Column(name = "data_Atualizacao", nullable = false)
- private Date dataAtualizacao;
+    @Column(name = "bloqueado", nullable = false)
+    private boolean bloqueado;
 
- @JsonBackReference
- @ManyToOne(fetch = FetchType.EAGER)
- private Cliente cliente;
+    @Column(name = "data_Atualizacao", nullable = false)
+    private Date dataAtualizacao;
 
- public int getId() {
- return id;
- }
+    @JsonBackReference
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Cliente cliente;
 
- public void setId(int id) {
- this.id = id;
- }
- 
- public String getNumero() {
- return numero;
- }
+    public int getId() {
+        return id;
+    }
 
- public void setNumero(String numero) {
- this.numero = numero;
- }
+    public void setId(int id) {
+        this.id = id;
+    }
 
- public Date getDataValidade() {
- return dataValidade;
- }
+    public String getNumero() {
+        return numero;
+    }
 
- public void setDataValidade(Date dataValidade) {
- this.dataValidade = dataValidade;
- }
- 
- public boolean getBloqueado() {
- return bloqueado;
- }
+    public void setNumero(String numero) {
+        this.numero = numero;
+    }
 
- public void setBloqueado(boolean bloqueado) {
- this.bloqueado = bloqueado;
- }
- 
- public Date getDataAtualizacao() {
- return dataAtualizacao;
- }
+    public Date getDataValidade() {
+        return dataValidade;
+    }
 
- public void setDataAtualizacao(Date dataAtualizacao) {
- this.dataAtualizacao = dataAtualizacao;
- }
- 
- public Cliente getCliente() {
- return cliente;
- }
+    public void setDataValidade(Date dataValidade) {
+        this.dataValidade = dataValidade;
+    }
 
- public void setCliente(Cliente cliente) {
- this.cliente = cliente;
- }
- 
- @PreUpdate
- public void preUpdate() {
- dataAtualizacao = new Date();
- }
- 
- @PrePersist
- public void prePersist() {
- dataAtualizacao = new Date();
- }
- 
- @Override
- public String toString() {
- return "Cartao[" + "id=" + id + ","
- + "numero=" + numero + ","
- + "dataValidade=" + dataValidade + ","
- + "bloqueado=" + bloqueado + ","
- + "dataAtualizacao=" + dataAtualizacao + ","
- + "cliente=" + cliente + "]";
- }
- 
+    public boolean getBloqueado() {
+        return bloqueado;
+    }
+
+    public void setBloqueado(boolean bloqueado) {
+        this.bloqueado = bloqueado;
+    }
+
+    public Date getDataAtualizacao() {
+        return dataAtualizacao;
+    }
+
+    public void setDataAtualizacao(Date dataAtualizacao) {
+        this.dataAtualizacao = dataAtualizacao;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        dataAtualizacao = new Date();
+    }
+
+    @PrePersist
+    public void prePersist() {
+        dataAtualizacao = new Date();
+    }
+
+    @Override
+    public String toString() {
+        return "Cartao[" + "id=" + id + "," + "numero=" + numero + "," + "dataValidade=" + dataValidade + ","
+                + "bloqueado=" + bloqueado + "," + "dataAtualizacao=" + dataAtualizacao + "," + "cliente=" + cliente
+                + "]";
+    }
+
 }
