@@ -3,6 +3,12 @@ package com.cartoes.api.controllers;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+
+import com.cartoes.api.entities.Cartao;
+import com.cartoes.api.services.CartaoService;
+import com.cartoes.api.utils.ConsistenciaException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +21,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.cartoes.api.entities.Cartao;
-import com.cartoes.api.services.CartaoService;
-import com.cartoes.api.utils.ConsistenciaException;
 
 @RestController
-@RequestMapping("/api/cartao")
+@RequestMapping(value = "/api/cartao")
 @CrossOrigin(origins = "*")
 public class CartaoController {
     private static final Logger log = LoggerFactory.getLogger(CartaoController.class);

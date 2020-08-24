@@ -31,18 +31,12 @@ public class TransacaoController {
 	@Autowired
 	private TransacaoService transacaoService;
 	
-	/**
-	 * Retorna as transações do numero do cartão informado no parametro
-	 * 
-	 * @param Numero do cartao a ser consultado
-	 * @return Lista de transações que o cartão realizou
-	 */
 	@GetMapping(value = "/cartao/{cartaoNumero}")
-	public ResponseEntity<List<Transacao>> buscarPorCartaoNumero(@PathVariable("cartaoNumero") String cartaoNumero){
+	public ResponseEntity<List<Transacao>> buscarPorNumero(@PathVariable("numero") String numero){
 		try {
-			log.info("Controller: buscando transações do cartão de Numero: {}", cartaoNumero);
+			log.info("Controller: buscando transações do cartão de Numero: {}", numero);
 			
-			Optional<List<Transacao>> listaTransacoes = transacaoService.buscarPorNumero(cartaoNumero);
+			Optional<List<Transacao>> listaTransacoes = transacaoService.buscarPorNumero(numero);
 			
 			return ResponseEntity.ok(listaTransacoes.get());
 		} catch (ConsistenciaException e) {
@@ -53,13 +47,7 @@ public class TransacaoController {
 			return ResponseEntity.status(500).body(new ArrayList<Transacao>());
 		}
 	}
-	
-	/**
-   	 * Persiste uma transacao na base.
-   	 *
-   	 * @param Dados de entrada da transacao
-   	 * @return Dados da transacao persistida
-   	 */
+
 	@PostMapping
 	public ResponseEntity<Transacao> salvar(@RequestBody Transacao transacao){
 		try {
