@@ -10,8 +10,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "transacao")
@@ -37,7 +39,7 @@ public class Transacao implements Serializable {
     @Column(name = "juros", nullable = false)
     private Double juros;
 
-    @JsonManagedReference
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.EAGER)
     private Cartao cartao;
 
@@ -87,6 +89,11 @@ public class Transacao implements Serializable {
 
     public void setCartoes(Cartao cartao) {
         this.cartao = cartao;
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        dataTransacao = new Date();
     }
 
     @PrePersist

@@ -31,7 +31,7 @@ public class TransacaoController {
 	@Autowired
 	private TransacaoService transacaoService;
 	
-	@GetMapping(value = "/cartao/{cartaoNumero}")
+	@GetMapping(value = "cartao/{numero}")
 	public ResponseEntity<List<Transacao>> buscarPorNumero(@PathVariable("numero") String numero){
 		try {
 			log.info("Controller: buscando transações do cartão de Numero: {}", numero);

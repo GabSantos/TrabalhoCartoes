@@ -11,4 +11,7 @@ import com.cartoes.api.entities.Cartao;
 public interface CartaoRepository extends JpaRepository<Cartao, Integer> {
     @Query("SELECT ca FROM Cartao ca WHERE ca.cliente.id = :clienteId")
     List<Cartao> findByClienteId(@Param("clienteId") int clienteId);
+
+    @Query("SELECT numero FROM Cartao numero WHERE numero.numero = :num")
+    Cartao findByNumero(@Param("num") String num);
 }

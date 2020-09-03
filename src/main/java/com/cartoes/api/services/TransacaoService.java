@@ -1,12 +1,17 @@
 package com.cartoes.api.services;
 
-import java.util.Optional;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+
+import com.cartoes.api.entities.Cartao;
 import com.cartoes.api.entities.Transacao;
+import com.cartoes.api.repositories.CartaoRepository;
 import com.cartoes.api.repositories.TransacaoRepository;
 import com.cartoes.api.utils.ConsistenciaException;
 
@@ -17,7 +22,10 @@ public class TransacaoService {
 	@Autowired
 	private TransacaoRepository transacaoRepository;
 
-    public Optional<Transacao> buscarPorId(int id) throws ConsistenciaException {
+	@Autowired
+	private CartaoRepository cartaoRepository;
+
+	public Optional<Transacao> buscarPorId(int id) throws ConsistenciaException {
 		log.info("Service: buscando os cartoes de id: {}", id);
 		Optional<Transacao> cartao = transacaoRepository.findById(id);
 		if (!cartao.isPresent()) {
@@ -31,7 +39,7 @@ public class TransacaoService {
 
 		log.info("Service: buscando transações do cartão de numero: {}", numero);
 
-		Optional<List<Transacao>> transacao = Optional.ofNullable(transacaoRepository.findByNumero(numero));
+		Optional<List<Transacao>> transacao = Optional.ofNullable(transacaoRepository.findByNum(numero));
 
 		if (!transacao.isPresent()) {
 			log.info("Service: Nenhuma transacao do cartão: {} foi encontrada", numero);
@@ -46,11 +54,41 @@ public class TransacaoService {
 
 		log.info("Service: salvando a transação: {}", transacao);
 
-		if (transacao.getId() > 0)
-			buscarPorId(transacao.getId());
+		
+		if (!Optional.ofNullable(cartaoRepository.findByNumero(transacao.getCartoes().getNumero())).isPresent()) {
+			log.info("Service: Nenhuma transação com cartão de numero: {} foi encontrada",
+			transacao.getCartoes().getNumero());
+			throw new ConsistenciaException("Service: Nenhuma transação com cartão de numero: {} foi encontrada",
+			transacao.getCartoes().getNumero());
+		}
+		
+		Cartao cartao = cartaoRepository.findByNumero(transacao.getCartoes().getNumero());
+		transacao.setCartoes(cartao);
 
-		
-		return transacaoRepository.save(transacao);
-		
+		if (transacao.getCartoes().getBloqueado()) {
+			log.info(
+					"Service: Não é possível incluir transações para este cartão, pois o mesmo encontra-se bloqueado. ");
+			throw new ConsistenciaException(
+					"Service: Não é possível incluir transações para este cartão, pois o mesmo encontra-se bloqueado. ");
+		}
+
+		if (transacao.getCartoes().getDataValidade().before(new Date())) {
+			log.info("Service: Não é possível incluir transações para este cartão, pois o mesmo encontra-se vencido");
+			throw new ConsistenciaException(
+					"Service: Não é possível incluir transações para este cartão, pois o mesmo encontra-se vencido");
+		}
+
+		if (transacao.getId() > 0) {
+			log.info("Service: Transações não podem ser alteradas, apenas incluídas");
+			throw new ConsistenciaException("Service: Transações não podem ser alteradas, apenas incluídas");
+		}
+
+		try {
+			return transacaoRepository.save(transacao);
+		} catch (DataIntegrityViolationException e) {
+			log.info("Service: Erro ao inserir transação");
+			throw new ConsistenciaException("Erro ao inserir transação");
+		}
+
 	}
 }
