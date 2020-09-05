@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cartoes.api.dtos.TransacaoDto;
 import com.cartoes.api.entities.Transacao;
 import com.cartoes.api.response.Response;
 import com.cartoes.api.services.TransacaoService;
