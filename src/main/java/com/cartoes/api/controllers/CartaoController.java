@@ -121,7 +121,6 @@ public class CartaoController {
             cartaoService.excluirPorId(id);
 
             response.setDados("Cartao de id: " + id + " excluído com sucesso");
-
             return ResponseEntity.ok(response);
 
         } catch (ConsistenciaException e) {

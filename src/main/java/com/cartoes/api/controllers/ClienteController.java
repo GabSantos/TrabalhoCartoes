@@ -41,7 +41,6 @@ public class ClienteController {
 			Optional<Cliente> cliente = clienteService.buscarPorId(id);
 
 			response.setDados(cliente.get());
-
 			return ResponseEntity.ok(response);
 
 		} catch (ConsistenciaException e) {
