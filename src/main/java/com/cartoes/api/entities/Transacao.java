@@ -71,12 +71,20 @@ public class Transacao implements Serializable {
         return valor;
     }
 
-    public void setUf(Double valor) {
+    public void setValor(Double valor) {
         this.valor = valor;
     }
 
     public int getQdtParcelas() {
         return qdtParcelas;
+    }
+
+    public void setQtdParcelas(int qdtParcelas) {
+        this.qdtParcelas = qdtParcelas;
+    }
+
+    public Double getJuros() {
+        return juros;
     }
 
     public void setJuros(Double juros) {

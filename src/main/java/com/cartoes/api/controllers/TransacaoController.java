@@ -20,6 +20,8 @@ import com.cartoes.api.entities.Transacao;
 import com.cartoes.api.response.Response;
 import com.cartoes.api.services.TransacaoService;
 import com.cartoes.api.utils.ConsistenciaException;
+import com.cartoes.api.utils.ConversaoUtils;
+
 
 
 @RestController
@@ -33,46 +35,60 @@ public class TransacaoController {
 	private TransacaoService transacaoService;
 	
 	@GetMapping(value = "cartao/{numero}")
-	public ResponseEntity<Response<List<Transacao>>> buscarPorNumero(@PathVariable("numero") String numero){
+	public ResponseEntity<Response<List<TransacaoDto>>> buscarPorNumero(@PathVariable("numero") String numero){
 		
-		Response<List<Transacao>> response = new Response<List<Transacao>>();
+		Response<List<TransacaoDto>> response = new Response<List<TransacaoDto>>();
 		
 		try {
 			log.info("Controller: buscando transações do cartão de Numero: {}", numero);
 			
 			Optional<List<Transacao>> listaTransacoes = transacaoService.buscarPorNumero(numero);
 			
-			response.setDados(listaTransacoes.get());
+			response.setDados(ConversaoUtils.ConverterListaT(listaTransacoes.get()));
+
 			return ResponseEntity.ok(response);
+
 		} catch (ConsistenciaException e) {
+
 			log.info("Controller: Inconsistencia de dados {}", e.getMensagem());
 			response.adicionarErro(e.getMensagem());
-			return ResponseEntity.badRequest().body(response);			
+			return ResponseEntity.badRequest().body(response);	
+
 		} catch (Exception e) {
+
 			log.error("Controller: Ocorreu um erro na aplicação: {}", e.getMessage());
 			response.adicionarErro("Ocorreu um erro na aplicação: {}", e.getMessage());
 			return ResponseEntity.status(500).body(response);
+
 		}
 	}
 
 	@PostMapping
-	public ResponseEntity<Response<Transacao>> salvar(@RequestBody Transacao transacao){
+	public ResponseEntity<Response<TransacaoDto>> salvar(@RequestBody TransacaoDto transacaoDto){
 		
-		Response<Transacao> response = new Response<Transacao>();
+		Response<TransacaoDto> response = new Response<TransacaoDto>();
 		
 		try {
 
-			log.info("Controller: salvando a transacao: {}", transacao.toString());
-			response.setDados(this.transacaoService.salvar(transacao));
+			log.info("Controller: salvando a transacao: {}", transacaoDto.toString());
+			
+			Transacao transacao = this.transacaoService.salvar(ConversaoUtils.Converter(transacaoDto));
+			response.setDados(ConversaoUtils.Converter(transacao));
+
 			return ResponseEntity.ok(response);
+	
 		} catch (ConsistenciaException e) {
+
 			log.info("Controller: Inconsistência de dados: {}", e.getMensagem());
 			response.adicionarErro(e.getMensagem());
 			return ResponseEntity.badRequest().body(response);
+
 		} catch (Exception e) {
+
 			log.error("Controller: Ocorreu um erro na aplicação: {}", e.getMessage());
 			response.adicionarErro("Ocorreu um erro na aplicação: {}", e.getMessage());
 			return ResponseEntity.status(500).body(response);
+			
 		}
 	}
 }

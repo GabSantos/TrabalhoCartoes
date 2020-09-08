@@ -7,10 +7,63 @@ import java.util.List;
 
 import com.cartoes.api.dtos.CartaoDto;
 import com.cartoes.api.dtos.ClienteDto;
+import com.cartoes.api.dtos.TransacaoDto;
 import com.cartoes.api.entities.Cartao;
 import com.cartoes.api.entities.Cliente;
+import com.cartoes.api.entities.Transacao;
 
 public class ConversaoUtils {
+
+
+    public static Transacao Converter(TransacaoDto transacaoDto) throws ParseException {
+
+        Transacao transacao = new Transacao();
+
+        if (transacaoDto.getId() != null && transacaoDto.getId() != "")
+            transacao.setId(Integer.parseInt(transacaoDto.getId()));
+
+        transacao.setDataTransacao(new SimpleDateFormat("dd/MM/yyyy").parse(transacaoDto.getDataTransacao()));
+        transacao.setCnpj(transacaoDto.getCnpj());
+        transacao.setValor(Double.parseDouble(transacaoDto.getValor()));
+        transacao.setQtdParcelas(Integer.parseInt(transacaoDto.getQtdParcelas()));
+        transacao.setJuros(Double.parseDouble(transacaoDto.getJuros()));
+
+        Cartao cartao = new Cartao();
+        cartao.setId(Integer.parseInt(transacaoDto.getCartaoId()));
+
+        transacao.setCartoes(cartao);
+
+        return transacao;
+
+    }
+
+    public static TransacaoDto Converter(Transacao transacao) {
+
+        TransacaoDto transacaoDto = new TransacaoDto();
+
+        transacaoDto.setId(String.valueOf(transacao.getId()));
+        transacaoDto.setDataTransacao(transacao.getDataTransacao().toString());
+        transacaoDto.setCnpj(transacao.getCnpj());
+        transacaoDto.setValor(transacao.getValor().toString());
+        transacaoDto.setQtdParcelas(String.valueOf(transacao.getQdtParcelas()));
+        transacaoDto.setJuros(String.valueOf(transacao.getJuros()));
+        transacaoDto.setCartaoId(String.valueOf(transacao.getCartoes().getId()));
+
+        return transacaoDto;
+
+    }
+
+    public static List<TransacaoDto> ConverterListaT(List<Transacao> lista) {
+
+        List<TransacaoDto> lst = new ArrayList<TransacaoDto>(lista.size());
+
+        for (Transacao transacao : lista) {
+            lst.add(Converter(transacao));
+        }
+
+        return lst;
+
+    }
 
     public static Cartao Converter(CartaoDto cartaoDto) throws ParseException {
 
