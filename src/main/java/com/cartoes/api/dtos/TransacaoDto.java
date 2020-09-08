@@ -1,12 +1,33 @@
 package com.cartoes.api.dtos;
 
+import javax.validation.constraints.NotEmpty;
+
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.br.CNPJ;
+
 public class TransacaoDto {
+
     private String id;
+
     private String dataTransacao;
+
+    @NotEmpty(message = "O cnpj não pode ser vazio")
+    @CNPJ(message = "O cnpj deve ser válido")
     private String cnpj;
+
+    @NotEmpty(message = "O valor não pode ser vazi0")
+    @Length(max = 10, message = "Valor pode ter até 10 caracteres numéricos")
     private String valor;
+
+    @NotEmpty(message = "A quantidade de parcelas não pode ser vazia")
+    @Length(max = 2, message = "Juros pode ter até 2 caracteres numéricos")
     private String qtdParcelas;
+
+    @NotEmpty(message = "O juros não pode ser vazio")
+    @Length(max = 4, message = "Juros pode ter até 4 caracteres")
     private String juros;
+
+    @NotEmpty(message = "O ID do cartão não pode ser vazio.")
     private String cartaoId;
 
     public String getId() {
