@@ -39,7 +39,7 @@ public class TransacaoService {
 
 		log.info("Service: buscando transações do cartão de numero: {}", numero);
 
-		Optional<List<Transacao>> transacao = Optional.ofNullable(transacaoRepository.findByNum(numero));
+		Optional<List<Transacao>> transacao = transacaoRepository.findByNum(numero);
 
 		if (!transacao.isPresent()) {
 			log.info("Service: Nenhuma transacao do cartão: {} foi encontrada", numero);
@@ -54,16 +54,16 @@ public class TransacaoService {
 
 		log.info("Service: salvando a transação: {}", transacao);
 
+		Optional<Cartao> cartao = cartaoRepository.findByNumero(transacao.getCartoes().getNumero());
 		
-		if (!Optional.ofNullable(cartaoRepository.findByNumero(transacao.getCartoes().getNumero())).isPresent()) {
+		if (!cartao.isPresent()) {
 			log.info("Service: Nenhuma transação com cartão de numero: {} foi encontrada",
 			transacao.getCartoes().getNumero());
 			throw new ConsistenciaException("Service: Nenhuma transação com cartão de numero: {} foi encontrada",
 			transacao.getCartoes().getNumero());
 		}
 		
-		Cartao cartao = cartaoRepository.findByNumero(transacao.getCartoes().getNumero());
-		transacao.setCartoes(cartao);
+		transacao.setCartoes(cartao.get());
 
 		if (transacao.getCartoes().getBloqueado()) {
 			log.info(

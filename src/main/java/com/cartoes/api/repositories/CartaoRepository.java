@@ -1,6 +1,8 @@
 package com.cartoes.api.repositories;
 
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,5 +15,5 @@ public interface CartaoRepository extends JpaRepository<Cartao, Integer> {
     List<Cartao> findByClienteId(@Param("clienteId") int clienteId);
 
     @Query("SELECT numero FROM Cartao numero WHERE numero.numero = :num")
-    Cartao findByNumero(@Param("num") String num);
+    Optional<Cartao> findByNumero(@Param("num") String num);
 }

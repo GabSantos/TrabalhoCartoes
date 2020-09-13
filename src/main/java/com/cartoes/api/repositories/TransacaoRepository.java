@@ -6,12 +6,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.cartoes.api.entities.Transacao;
 
 @Transactional(readOnly = true)
 public interface TransacaoRepository extends JpaRepository<Transacao, Integer> {
     @Query("SELECT num  FROM Transacao num WHERE num.cartao.numero = :numero")
-    List<Transacao> findByNum(@Param("numero") String numero);
+    Optional<List<Transacao>> findByNum(@Param("numero") String numero);
     
 }
