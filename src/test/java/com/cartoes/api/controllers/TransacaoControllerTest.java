@@ -3,6 +3,8 @@ package com.cartoes.api.controllers;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -42,18 +44,18 @@ public class TransacaoControllerTest {
 	@MockBean
 	private TransacaoService transacaoService;
 
-	private Transacao CriarTransacaoTestes() {
+	private Transacao CriarTransacaoTestes() throws ParseException {
 
 		Transacao transacao = new Transacao();
 
 		transacao.setId(1);
-		transacao.setCnpj("12312312312312");
+		transacao.setCnpj("40432544000147");
 		transacao.setJuros(0.5);
 		transacao.setQtdParcelas(12);
 		transacao.setValor(1000.0);
+		transacao.setDataTransacao(new SimpleDateFormat("dd/MM/yyyy").parse("13/09/2020"));
 		transacao.setCartoes(new Cartao());
         transacao.getCartoes().setNumero("1231231231231231");
-        transacao.getCartoes().setId(1);
 
 		return transacao;
 
@@ -64,15 +66,17 @@ public class TransacaoControllerTest {
 	public void testBuscarPorCartaoNumeroSucesso() throws Exception {
 
 		Transacao transacao = CriarTransacaoTestes();
-		List<Transacao> lstTransacoes = new ArrayList<>();
-		lstTransacoes.add(transacao);
+		List<Transacao> transacaoLista = new ArrayList<>();
+		transacaoLista.add(transacao);
 
 		BDDMockito.given(transacaoService.buscarPorNumero(Mockito.anyString()))
-				.willReturn(Optional.of(lstTransacoes));
+				.willReturn(Optional.of(transacaoLista));
 
 		mvc.perform(
-				MockMvcRequestBuilders.get("/api/transacao/cartao/1231231231231231").accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk()).andExpect(jsonPath("$.dados[0].id").value(transacao.getId()))
+				MockMvcRequestBuilders.get("/api/transacao/cartao/1231231231231231")
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.dados[0].id").value(transacao.getId()))
 				.andExpect(jsonPath("$.dados[0].cnpj").value(transacao.getCnpj()))
 				.andExpect(jsonPath("$.dados[0].juros").value(transacao.getJuros()))
 				.andExpect(jsonPath("$.dados[0].qtdParcelas").value(transacao.getQdtParcelas()))
@@ -146,8 +150,8 @@ public class TransacaoControllerTest {
 		
 		objEntrada.setJuros("0.5");
 		objEntrada.setQtdParcelas("12");
-		objEntrada.setValor("1000.0");
-		objEntrada.setCartaoId("1");
+		objEntrada.setValor("1000");
+		objEntrada.setCartaoNumero("1231231231231231");
 		
 		String json = new ObjectMapper().writeValueAsString(objEntrada);
 
@@ -156,7 +160,7 @@ public class TransacaoControllerTest {
 			.contentType(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON))
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.erros").value("CNPJ não pode ser vazio."));
+			.andExpect(jsonPath("$.erros").value("O cnpj não pode ser vazio"));
 	}
 	
 	@Test
@@ -169,7 +173,7 @@ public class TransacaoControllerTest {
 		objEntrada.setJuros("0.5");
 		objEntrada.setQtdParcelas("12");
 		objEntrada.setValor("1000.0");
-		objEntrada.setCartaoId("1");
+		objEntrada.setCartaoNumero("1231231231231231");
 		
 		String json = new ObjectMapper().writeValueAsString(objEntrada);
 
@@ -178,7 +182,7 @@ public class TransacaoControllerTest {
 			.contentType(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON))
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.erros").value("CNPJ inválido."));
+			.andExpect(jsonPath("$.erros").value("O cnpj deve ser válido"));
 	}
 	
 
@@ -188,10 +192,10 @@ public class TransacaoControllerTest {
 		
 		TransacaoDto objEntrada = new TransacaoDto();
 		
-		objEntrada.setCnpj("12312312312312");		
+		objEntrada.setCnpj("40432544000147");		
 		objEntrada.setQtdParcelas("12");
 		objEntrada.setValor("1000.0");
-		objEntrada.setCartaoId("1");
+		objEntrada.setCartaoNumero("1231231231231231");
 		
 		String json = new ObjectMapper().writeValueAsString(objEntrada);
 
@@ -200,7 +204,7 @@ public class TransacaoControllerTest {
 			.contentType(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON))
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.erros").value("Juros não pode ser vazio."));
+			.andExpect(jsonPath("$.erros").value("O juros não pode ser vazio"));
 	}
 	
 	@Test
@@ -209,11 +213,11 @@ public class TransacaoControllerTest {
 		
 		TransacaoDto objEntrada = new TransacaoDto();
 		
-		objEntrada.setCnpj("12312312312312");
+		objEntrada.setCnpj("40432544000147");
 		objEntrada.setJuros("12345");
 		objEntrada.setQtdParcelas("12");
 		objEntrada.setValor("1000.0");
-		objEntrada.setCartaoId("1");
+		objEntrada.setCartaoNumero("1231231231231231");
 		
 		String json = new ObjectMapper().writeValueAsString(objEntrada);
 
@@ -222,7 +226,7 @@ public class TransacaoControllerTest {
 			.contentType(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON))
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.erros").value("Juros deve conter entre 1 e 4 caracteres."));
+			.andExpect(jsonPath("$.erros").value("Juros pode ter até 4 caracteres"));
 	}
 	
 	@Test
@@ -231,10 +235,10 @@ public class TransacaoControllerTest {
 		
 		TransacaoDto objEntrada = new TransacaoDto();
 		
-		objEntrada.setCnpj("12312312312312");
+		objEntrada.setCnpj("40432544000147");
 		objEntrada.setJuros("0.5");		
 		objEntrada.setValor("1000.0");
-		objEntrada.setCartaoId("1");
+		objEntrada.setCartaoNumero("1231231231231231");
 		
 		String json = new ObjectMapper().writeValueAsString(objEntrada);
 
@@ -243,7 +247,7 @@ public class TransacaoControllerTest {
 			.contentType(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON))
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.erros").value("Quantidade de parcelas não pode ser vazio."));
+			.andExpect(jsonPath("$.erros").value("A quantidade de parcelas não pode ser vazia"));
 	}
 	
 	@Test
@@ -252,11 +256,11 @@ public class TransacaoControllerTest {
 		
 		TransacaoDto objEntrada = new TransacaoDto();
 		
-		objEntrada.setCnpj("12312312312312");
+		objEntrada.setCnpj("40432544000147");
 		objEntrada.setQtdParcelas("100");
 		objEntrada.setJuros("0.5");		
 		objEntrada.setValor("1000.0");
-		objEntrada.setCartaoId("1");
+		objEntrada.setCartaoNumero("1231231231231231");
 		
 		String json = new ObjectMapper().writeValueAsString(objEntrada);
 
@@ -265,7 +269,7 @@ public class TransacaoControllerTest {
 			.contentType(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON))
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.erros").value("Quantidade de parcelas deve conter 1 ou 2 caracteres."));
+			.andExpect(jsonPath("$.erros").value("Quantidade de parcelas pode ter até 2 caracteres numéricos"));
 	}
 	
 	@Test
@@ -274,10 +278,10 @@ public class TransacaoControllerTest {
 		
 		TransacaoDto objEntrada = new TransacaoDto();
 		
-		objEntrada.setCnpj("12312312312312");
+		objEntrada.setCnpj("40432544000147");
 		objEntrada.setQtdParcelas("12");
 		objEntrada.setJuros("0.5");				
-		objEntrada.setCartaoId("1");
+		objEntrada.setCartaoNumero("1231231231231231");
 		
 		String json = new ObjectMapper().writeValueAsString(objEntrada);
 
@@ -286,7 +290,7 @@ public class TransacaoControllerTest {
 			.contentType(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON))
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.erros").value("Valor não pode ser vazio."));
+			.andExpect(jsonPath("$.erros").value("O valor não pode ser vazio"));
 	}
 	
 	@Test
@@ -295,11 +299,11 @@ public class TransacaoControllerTest {
 		
 		TransacaoDto objEntrada = new TransacaoDto();
 		
-		objEntrada.setCnpj("12312312312312");
+		objEntrada.setCnpj("40432544000147");
 		objEntrada.setQtdParcelas("12");
 		objEntrada.setValor("99999999999");
 		objEntrada.setJuros("0.5");				
-		objEntrada.setCartaoId("1");
+		objEntrada.setCartaoNumero("1231231231231231");
 		
 		String json = new ObjectMapper().writeValueAsString(objEntrada);
 
@@ -308,7 +312,7 @@ public class TransacaoControllerTest {
 			.contentType(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON))
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.erros").value("Valor deve conter entre 1 e 10 caracteres."));
+			.andExpect(jsonPath("$.erros").value("Valor pode ter até 10 caracteres numéricos"));
 	}
 	
 	@Test
@@ -317,10 +321,10 @@ public class TransacaoControllerTest {
 		
 		TransacaoDto objEntrada = new TransacaoDto();
 		
-		objEntrada.setCnpj("12312312312312");
+		objEntrada.setCnpj("40432544000147");
 		objEntrada.setQtdParcelas("12");
-		objEntrada.setValor("1000");
-		objEntrada.setJuros("0.5");						
+		objEntrada.setValor("1000.0");
+		objEntrada.setJuros("0.5");					
 		
 		String json = new ObjectMapper().writeValueAsString(objEntrada);
 
@@ -329,7 +333,51 @@ public class TransacaoControllerTest {
 			.contentType(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON))
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.erros").value("O número do cartão não pode ser vazio."));
+			.andExpect(jsonPath("$.erros").value("O numero do cartão não pode ser vazio"));
+	}
+	
+	@Test
+	@WithMockUser
+	public void testSalvarCartaoInsuficiente() throws Exception {
+		
+		TransacaoDto objEntrada = new TransacaoDto();
+		
+		objEntrada.setCnpj("40432544000147");
+		objEntrada.setQtdParcelas("12");
+		objEntrada.setValor("1000.0");
+		objEntrada.setJuros("0.5");		
+		objEntrada.setCartaoNumero("123");
+		
+		String json = new ObjectMapper().writeValueAsString(objEntrada);
+
+		mvc.perform(MockMvcRequestBuilders.post("/api/transacao")
+			.content(json)
+			.contentType(MediaType.APPLICATION_JSON)
+			.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.erros").value("O numero do cartão deve ter 16 caracteres"));
+	}
+	
+	@Test
+	@WithMockUser
+	public void testSalvarCartaoExcedente() throws Exception {
+		
+		TransacaoDto objEntrada = new TransacaoDto();
+		
+		objEntrada.setCnpj("40432544000147");
+		objEntrada.setQtdParcelas("12");
+		objEntrada.setValor("1000.0");
+		objEntrada.setJuros("0.5");	
+		objEntrada.setCartaoNumero("123123123123123123");
+		
+		String json = new ObjectMapper().writeValueAsString(objEntrada);
+
+		mvc.perform(MockMvcRequestBuilders.post("/api/transacao")
+			.content(json)
+			.contentType(MediaType.APPLICATION_JSON)
+			.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.erros").value("O numero do cartão deve ter 16 caracteres"));
 	}
 
 }

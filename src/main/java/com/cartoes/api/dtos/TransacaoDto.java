@@ -15,20 +15,21 @@ public class TransacaoDto {
     @CNPJ(message = "O cnpj deve ser válido")
     private String cnpj;
 
-    @NotEmpty(message = "O valor não pode ser vazi0")
+    @NotEmpty(message = "O valor não pode ser vazio")
     @Length(max = 10, message = "Valor pode ter até 10 caracteres numéricos")
     private String valor;
 
     @NotEmpty(message = "A quantidade de parcelas não pode ser vazia")
-    @Length(max = 2, message = "Juros pode ter até 2 caracteres numéricos")
+    @Length(max = 2, message = "Quantidade de parcelas pode ter até 2 caracteres numéricos")
     private String qtdParcelas;
 
     @NotEmpty(message = "O juros não pode ser vazio")
     @Length(max = 4, message = "Juros pode ter até 4 caracteres")
     private String juros;
 
-    @NotEmpty(message = "O ID do cartão não pode ser vazio.")
-    private String cartaoId;
+    @NotEmpty(message = "O numero do cartão não pode ser vazio")
+    @Length(min = 16, max = 16, message = "O numero do cartão deve ter 16 caracteres")
+    private String cartaoNumero;
 
     public String getId() {
         return id;
@@ -74,12 +75,12 @@ public class TransacaoDto {
     public void setJuros(String juros){
         this.juros = juros;
     }
-    public String getCartaoId() {
-        return cartaoId;
+    public String getCartaoNumero() {
+        return cartaoNumero;
     }
 
-    public void setCartaoId(String cartaoId){
-        this.cartaoId = cartaoId;
+    public void setCartaoNumero(String cartaoNumero){
+        this.cartaoNumero = cartaoNumero;
     }
 
     @Override
@@ -90,6 +91,6 @@ public class TransacaoDto {
             "valor" + valor + "," +
             "qtdParcelas" + qtdParcelas + "," +
             "juros" + juros + "," +
-            "cartaoId" + cartaoId + "]";
+            "cartaoNumero" + cartaoNumero + "]";
     }
 }
