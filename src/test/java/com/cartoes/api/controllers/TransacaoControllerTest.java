@@ -113,12 +113,12 @@ public class TransacaoControllerTest {
 			.contentType(MediaType.APPLICATION_JSON)
 			.accept(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.dados.id").value(transacao.getId()))
-			.andExpect(jsonPath("$.dados.cnpj").value(transacao.getCnpj()))
-			.andExpect(jsonPath("$.dados.juros").value(transacao.getJuros()))
-			.andExpect(jsonPath("$.dados.qtdParcelas").value(transacao.getQdtParcelas()))
-			.andExpect(jsonPath("$.dados.valor").value(transacao.getValor()))
-			.andExpect(jsonPath("$.dados.cartaoNumero").value(transacao.getCartoes().getNumero()))
+			.andExpect(jsonPath("$.dados[0].id").value(transacao.getId()))
+			.andExpect(jsonPath("$.dados[0].cnpj").value(transacao.getCnpj()))
+			.andExpect(jsonPath("$.dados[0].juros").value(transacao.getJuros()))
+			.andExpect(jsonPath("$.dados[0].qtdParcelas").value(transacao.getQdtParcelas()))
+			.andExpect(jsonPath("$.dados[0].valor").value(transacao.getValor()))
+			.andExpect(jsonPath("$.dados[0].cartaoNumero").value(transacao.getCartoes().getNumero()))
 			.andExpect(jsonPath("$.erros").isEmpty());
 	}
 	

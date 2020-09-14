@@ -1,6 +1,5 @@
 package com.cartoes.api.utils;
 
-import java.io.Console;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
