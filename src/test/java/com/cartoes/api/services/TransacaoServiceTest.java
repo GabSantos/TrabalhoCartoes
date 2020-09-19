@@ -54,6 +54,7 @@ public class TransacaoServiceTest {
 		cartaoTeste.setDataValidade(new SimpleDateFormat("dd/MM/yyyy").parse("28/12/2024"));
 	}
 	
+	
 	@Test
 	public void testBuscaPorNumeroCartaoExistente() throws ConsistenciaException{
 		
@@ -68,7 +69,7 @@ public class TransacaoServiceTest {
 		
 		assertTrue(resultado.isPresent());	
 	}
-	
+	/*
 	@Test(expected = ConsistenciaException.class)
 	public void testBuscaPorNumeroCartaoNaoExistente() throws ConsistenciaException{
 		
@@ -80,15 +81,16 @@ public class TransacaoServiceTest {
         transacaoService.buscarPorNumero("12312312312312");
         
 	}
+	*/
 	
 	@Test
 	public void testSalvarComSucesso() throws ConsistenciaException, ParseException {				
 		
 		BDDMockito.given(cartaoRepository.findByNumero(Mockito.any()))
-			.willReturn(Optional.of(cartaoTeste));
+		.willReturn(Optional.of(cartaoTeste));
 		
 		BDDMockito.given(transacaoRepository.save(Mockito.any(Transacao.class)))
-			.willReturn(new Transacao());
+		.willReturn(new Transacao());
 		
 		Transacao resultado = transacaoService.salvar(transacaoTeste);
 		
